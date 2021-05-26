@@ -10,7 +10,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,31 +36,34 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function HomePage() {
+export default function ZipCodePage() {
     const jwt = useSelector(selectJWT);
-    const [countiesData, setCountiesData] = useState([]);
+    const [countyData, setCountyData] = useState({
+        data: { attributes: { name: "", state: "", total_donated: 0 } },
+        included: [],
+    });
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const history = useHistory();
+    let { id } = useParams();
 
     useEffect(() => {
         const fetchCountyData = () => {
-            fetch("http://localhost:3000/counties", {
+            fetch(`http://localhost:3000/counties/${id}`, {
                 method: "get",
                 headers: {
                     "Content-Type": "application/json",
-                    "page": page + 1,
-                    "amount": rowsPerPage,
                 },
             })
                 .then((data) => data.json())
                 .then((data) => {
-                    setCountiesData(data.data);
+                    data.included.sort((a, b) => b.attributes.total_donated - a.attributes.total_donated);
+                    setCountyData(data);
                 });
         };
         fetchCountyData();
-    }, [page, rowsPerPage]);
+    }, [id]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -75,29 +78,15 @@ export default function HomePage() {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    const handleLink = (id) => {
-        fetch("http://localhost:3000/addlink", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "token": jwt,
-            },
-            body: JSON.stringify({
-                user: {
-                    type: "county",
-                    id: id,
-                },
-            }),
-        })
-            .then((data) => data.json())
-            .then((data) => {
-                console.log(data);
-            });
-    };
-
     return (
         <Fragment>
-            <Paper>HOME PAGE: User: {jwt}</Paper>
+            <Paper>
+                County: {countyData.data.attributes.name}
+                <br />
+                State: {countyData.data.attributes.state}
+                <br />
+                Total Amount For County: {countyData.data.attributes.total_donated}
+            </Paper>
             <TableContainer component={Paper}>
                 <Table
                     className={classes.table}
@@ -107,38 +96,29 @@ export default function HomePage() {
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell>County Name</TableCell>
-                            <TableCell align="right">State</TableCell>
+                            <TableCell>Zip Code</TableCell>
                             <TableCell align="right">Total Amount Donated</TableCell>
                             {jwt === "" ? null : <TableCell align="right">Add to Watch List</TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {countiesData.map((row) => {
+                        {countyData.included.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                             return (
                                 <TableRow
-                                    onClick={() => history.push(`/county/${row.id}`)}
+                                    onClick={() => history.push(`/zip/${row.id}`)}
                                     key={row.id}
                                     hover
                                     tabIndex={-1}
                                 >
                                     <TableCell component="th" scope="row" paddingRight="10px">
-                                        {row.attributes.name}
+                                        {row.attributes.zip}
                                     </TableCell>
-                                    <TableCell align="right">{row.attributes.state}</TableCell>
                                     <TableCell align="right">{`$${numberWithCommas(
                                         row.attributes.total_donated
                                     )}`}</TableCell>
                                     {jwt === "" ? null : (
                                         <TableCell align="right">
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleLink(row.id);
-                                                }}
-                                            >
-                                                Select
-                                            </Button>
+                                            <Button>Select</Button>
                                         </TableCell>
                                     )}
                                 </TableRow>
@@ -148,9 +128,9 @@ export default function HomePage() {
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[20, 50, 100]}
+                rowsPerPageOptions={[10, 20, 50, 100]}
                 component="div"
-                count={3223}
+                count={countyData.included.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}

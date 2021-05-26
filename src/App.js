@@ -9,6 +9,8 @@ import NavBar from "./components/NavBar";
 import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 import ProfilePage from "./components/ProfilePage";
+import ZipCodePage from "./components/ZipCodePage";
+import ConToZipPage from "./components/ConToZipPage";
 
 const theme = createMuiTheme({
     palette: {
@@ -35,7 +37,8 @@ function App() {
                         <Route path="/profile">
                             <ProfilePage />
                         </Route>
-                        {/* <Route path="/summoner/:name" render={(props) => <SummonerPage {...props} />} /> */}
+                        <Route path="/county/:id" render={(props) => <ZipCodePage {...props} />} />
+                        <Route path="/zip/:id" render={(props) => <ConToZipPage {...props} />} />
                         <Route path="*">
                             <ErrorPage />
                         </Route>

@@ -10,7 +10,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,17 +36,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function HomePage() {
+export default function ConToZipPage() {
     const jwt = useSelector(selectJWT);
-    const [countiesData, setCountiesData] = useState([]);
+    const [donationData, setDonationData] = useState({ data: [], included: [] });
+    // const [zipData, setZipData] = useState({ data: [], included: [] });
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const history = useHistory();
+    let { id } = useParams();
 
     useEffect(() => {
         const fetchCountyData = () => {
-            fetch("http://localhost:3000/counties", {
+            fetch(`http://localhost:3000/zip_codes/${id}`, {
                 method: "get",
                 headers: {
                     "Content-Type": "application/json",
@@ -56,11 +58,11 @@ export default function HomePage() {
             })
                 .then((data) => data.json())
                 .then((data) => {
-                    setCountiesData(data.data);
+                    setDonationData(data);
                 });
         };
         fetchCountyData();
-    }, [page, rowsPerPage]);
+    }, [page, rowsPerPage, id]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -75,29 +77,9 @@ export default function HomePage() {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    const handleLink = (id) => {
-        fetch("http://localhost:3000/addlink", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "token": jwt,
-            },
-            body: JSON.stringify({
-                user: {
-                    type: "county",
-                    id: id,
-                },
-            }),
-        })
-            .then((data) => data.json())
-            .then((data) => {
-                console.log(data);
-            });
-    };
-
     return (
         <Fragment>
-            <Paper>HOME PAGE: User: {jwt}</Paper>
+            <Paper>Donations for {id}</Paper>
             <TableContainer component={Paper}>
                 <Table
                     className={classes.table}
@@ -107,17 +89,21 @@ export default function HomePage() {
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell>County Name</TableCell>
-                            <TableCell align="right">State</TableCell>
+                            <TableCell>Name</TableCell>
                             <TableCell align="right">Total Amount Donated</TableCell>
+                            <TableCell align="right">Entity Type</TableCell>
+                            <TableCell align="right">Committee</TableCell>
+                            <TableCell align="right">Location</TableCell>
+                            <TableCell align="right">Employment</TableCell>
+                            <TableCell align="right">Date</TableCell>
                             {jwt === "" ? null : <TableCell align="right">Add to Watch List</TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {countiesData.map((row) => {
+                        {donationData.data.map((row) => {
                             return (
                                 <TableRow
-                                    onClick={() => history.push(`/county/${row.id}`)}
+                                    // onClick={() => history.push(`/county/${row.id}`)}
                                     key={row.id}
                                     hover
                                     tabIndex={-1}
@@ -125,20 +111,21 @@ export default function HomePage() {
                                     <TableCell component="th" scope="row" paddingRight="10px">
                                         {row.attributes.name}
                                     </TableCell>
-                                    <TableCell align="right">{row.attributes.state}</TableCell>
-                                    <TableCell align="right">{`$${numberWithCommas(
-                                        row.attributes.total_donated
-                                    )}`}</TableCell>
+                                    <TableCell align="right">{`$${numberWithCommas(row.attributes.amount)}`}</TableCell>
+                                    <TableCell align="right">{row.attributes.entity_type}</TableCell>
+                                    <TableCell align="right">
+                                        {
+                                            donationData.included.find(
+                                                (c) => c.id === row.relationships.committee.data.id
+                                            ).attributes.comm_name
+                                        }
+                                    </TableCell>
+                                    <TableCell align="right">{`${row.attributes.city}, ${row.attributes.state},  ${row.attributes.zip}`}</TableCell>
+                                    <TableCell align="right">{`${row.attributes.employ}, ${row.attributes.occu}`}</TableCell>
+                                    <TableCell align="right">{row.attributes.date}</TableCell>
                                     {jwt === "" ? null : (
                                         <TableCell align="right">
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleLink(row.id);
-                                                }}
-                                            >
-                                                Select
-                                            </Button>
+                                            <Button>Select</Button>
                                         </TableCell>
                                     )}
                                 </TableRow>
