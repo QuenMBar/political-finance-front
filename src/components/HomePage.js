@@ -11,6 +11,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { useHistory } from "react-router-dom";
+import MapPage from "./MapPage";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,6 +34,14 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         top: 20,
         width: 1,
+    },
+    map: {
+        // backgroundColor: "blue",
+        width: "90vw",
+        height: "80vh",
+        marginTop: "5vh",
+        marginBottom: "5vh",
+        marginLeft: "5vw",
     },
 }));
 
@@ -59,7 +68,7 @@ export default function HomePage() {
                     setCountiesData(data.data);
                 });
         };
-        fetchCountyData();
+        // fetchCountyData();
     }, [page, rowsPerPage]);
 
     const handleChangePage = (event, newPage) => {
@@ -97,7 +106,10 @@ export default function HomePage() {
 
     return (
         <Fragment>
-            <Paper>HOME PAGE: User: {jwt}</Paper>
+            <div className={classes.map}>
+                <MapPage />
+            </div>
+            {/* <Paper>HOME PAGE: User: {jwt}</Paper>
             <TableContainer component={Paper}>
                 <Table
                     className={classes.table}
@@ -155,7 +167,7 @@ export default function HomePage() {
                 page={page}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
+            /> */}
         </Fragment>
     );
 }
