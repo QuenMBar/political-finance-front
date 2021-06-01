@@ -39,11 +39,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ConToZipPage() {
     const jwt = useSelector(selectJWT);
     const [donationData, setDonationData] = useState({ data: [], included: [] });
-    // const [zipData, setZipData] = useState({ data: [], included: [] });
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
-    const history = useHistory();
     let { id } = useParams();
 
     useEffect(() => {
@@ -75,6 +73,26 @@ export default function ConToZipPage() {
 
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    const handleLink = (id) => {
+        fetch("http://localhost:3000/addlink", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "token": jwt,
+            },
+            body: JSON.stringify({
+                user: {
+                    type: "county",
+                    id: id,
+                },
+            }),
+        })
+            .then((data) => data.json())
+            .then((data) => {
+                console.log(data);
+            });
     };
 
     return (
