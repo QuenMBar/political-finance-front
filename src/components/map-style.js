@@ -34,7 +34,12 @@ export const highlightLayer = {
             10,
             ["*", 1.5, ["+", 7, ["get", "radius"]]],
         ],
-        "circle-color": ["case", ["<", ["get", "dem_donation"], ["get", "rep_donation"]], "#FF0000", "#007cbf"],
+        "circle-color": [
+            "case",
+            ["==", ["get", "dem_donation"], ["get", "rep_donation"]],
+            "#78909c",
+            ["case", ["<", ["get", "dem_donation"], ["get", "rep_donation"]], "#FF0000", "#007cbf"],
+        ],
         "circle-opacity": 1,
     },
 };

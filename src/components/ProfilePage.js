@@ -1,4 +1,4 @@
-import { Typography, Paper } from "@material-ui/core";
+import { Typography, Paper, TextField, Button } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,11 +20,46 @@ import { makeStyles } from "@material-ui/core/styles";
 // import Challenger from "../assets/Emblem_Challenger.png";
 // import { Link } from "react-router-dom";
 import { loginAsync, selectJWT } from "../redux/loginReducer";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
-    // root: {
-    //     // width: "100%",
-    // },
+    root: {
+        width: "100%",
+        height: "calc(96vh - 60px)",
+    },
+    profile: {
+        width: "70%",
+        height: "200px",
+        marginLeft: "15%",
+        marginTop: "2.5%",
+        textAlign: "left",
+    },
+    watchlist: {
+        width: "70%",
+        height: "68.5%",
+        marginLeft: "15%",
+        marginTop: "2.5%",
+        marginBottom: 0,
+    },
+    name: {
+        marginLeft: "5%",
+        padding: "1%",
+    },
+    textField: {
+        marginLeft: "2%",
+        width: "96%",
+        // height: "80px",
+    },
+    bioLabel: {
+        marginLeft: "2%",
+        display: "inline",
+    },
+    saveButton: {
+        // display: "inline",
+        marginRight: "2%",
+        float: "right",
+        height: "25px",
+    },
     // heading: {
     //     fontSize: theme.typography.pxToRem(15),
     //     fontWeight: theme.typography.fontWeightRegular,
@@ -75,9 +110,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ProfilePage(props) {
-    // const classes = useStyles();
+    const classes = useStyles();
     const jwt = useSelector(selectJWT);
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState({ data: { attributes: { username: "" } } });
+    const [bioFeild, setBioFeild] = useState("");
+    let history = useHistory();
+    useEffect(() => {
+        if (jwt === "") {
+            history.push("/");
+        }
+    });
 
     useEffect(() => {
         fetch(`http://localhost:3000/users`, {
@@ -86,8 +128,37 @@ export default function ProfilePage(props) {
             },
         })
             .then((resp) => resp.json())
-            .then((data) => setUserData(data));
+            .then((data) => {
+                setUserData(data);
+                if (data.data.attributes.bio !== null) {
+                    setBioFeild(data.data.attributes.bio);
+                }
+            });
     }, []);
 
-    return <Paper>{JSON.stringify(userData)}</Paper>;
+    return (
+        <div className={classes.root}>
+            {JSON.stringify(userData)}
+            <Paper className={classes.profile}>
+                <Typography variant="h5" className={classes.name}>
+                    User: {userData.data.attributes.username}
+                </Typography>
+                <Typography variant="subtitle1" className={classes.bioLabel}>
+                    Bio:
+                </Typography>
+                <Button variant="contained" color="primary" className={classes.saveButton}>
+                    Save
+                </Button>
+                <TextField
+                    className={classes.textField}
+                    multiline
+                    rows={3}
+                    variant="outlined"
+                    value={bioFeild}
+                    onChange={(e) => setBioFeild(e.target.value)}
+                />
+            </Paper>
+            <Paper className={classes.watchlist}></Paper>
+        </div>
+    );
 }

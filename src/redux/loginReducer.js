@@ -32,7 +32,6 @@ function fetchUser(username, password) {
         })
             .then((data) => data.json())
             .then((data) => {
-                sessionStorage.setItem("jwtToken", data.token);
                 resolve(data);
             });
     });
@@ -76,6 +75,7 @@ export const loginReducer = createSlice({
                     state.loginStatus = "Bad username or password";
                 } else {
                     state.jwt = action.payload;
+                    sessionStorage.setItem("jwtToken", action.payload);
                     state.loginStatus = "";
                 }
             });

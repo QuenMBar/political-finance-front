@@ -8,7 +8,6 @@ import mapboxgl from "mapbox-gl";
 import { useSelector, useDispatch } from "react-redux";
 import { getGeoJsonAsync, selectGeoJson, setShowDonations, selectShowDonations } from "../redux/donationReducer";
 import { isEqual } from "lodash";
-import env from "react-dotenv";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
@@ -122,7 +121,7 @@ export default function MapPage() {
                     height="100%"
                     mapStyle="mapbox://styles/mapbox/light-v9"
                     onViewportChange={setViewport}
-                    mapboxApiAccessToken={env.MAPBOX_TOKEN}
+                    mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
                     onHover={onHover}
                     onClick={() => {
                         if (hoverInfo.FIPS !== undefined) {

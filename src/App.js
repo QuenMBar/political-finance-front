@@ -16,9 +16,11 @@ import MapPage from "./components/MapPage";
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: cyan[200],
+            main: "#e1bee7",
         },
-        secondary: red,
+        secondary: {
+            main: "#81c784",
+        },
     },
 });
 
