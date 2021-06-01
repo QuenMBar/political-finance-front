@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
         height: "100%",
         width: "40%",
         display: "inline-block",
+        backgroundColor: "#e9c46a",
     },
     innerDiv: {
         display: "flex",
@@ -82,6 +83,7 @@ export default function LoginPage(props) {
                         value={loginUser}
                         onChange={(e) => setLoginUser(e.target.value)}
                         variant="filled"
+                        style={{ backgroundColor: "#ffe8d6" }}
                     />
                     <TextField
                         id="login-pass"
@@ -90,6 +92,7 @@ export default function LoginPage(props) {
                         onChange={(e) => setLoginPass(e.target.value)}
                         variant="filled"
                         type="password"
+                        style={{ backgroundColor: "#ffe8d6" }}
                     />
                     <Button
                         color="primary"
@@ -112,6 +115,7 @@ export default function LoginPage(props) {
                         value={signUpUser}
                         onChange={(e) => setSignUpUser(e.target.value)}
                         variant="filled"
+                        style={{ backgroundColor: "#ffe8d6" }}
                     />
                     <TextField
                         id="signup-pass"
@@ -120,6 +124,7 @@ export default function LoginPage(props) {
                         onChange={(e) => setSignUpPass(e.target.value)}
                         variant="filled"
                         type="password"
+                        style={{ backgroundColor: "#ffe8d6" }}
                     />
                     <Button color="primary" className={classes.bttn} variant="contained" onClick={handleSignUp}>
                         SIGNUP

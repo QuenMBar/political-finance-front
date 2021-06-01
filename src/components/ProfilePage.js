@@ -1,4 +1,4 @@
-import { Typography, Paper, TextField, Button } from "@material-ui/core";
+import { Typography, Paper, TextField, Button, FormControlLabel, Switch } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,6 +21,7 @@ import { makeStyles } from "@material-ui/core/styles";
 // import { Link } from "react-router-dom";
 import { loginAsync, selectJWT } from "../redux/loginReducer";
 import { useHistory } from "react-router-dom";
+import { isEqual } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "15%",
         marginTop: "2.5%",
         textAlign: "left",
+        backgroundColor: "#e9c46a",
     },
     watchlist: {
         width: "70%",
@@ -44,11 +46,14 @@ const useStyles = makeStyles((theme) => ({
     name: {
         marginLeft: "5%",
         padding: "1%",
+        paddingTop: "1%",
+        display: "inline-block",
     },
     textField: {
         marginLeft: "2%",
         width: "96%",
         // height: "80px",
+        backgroundColor: "#ffe8d6",
     },
     bioLabel: {
         marginLeft: "2%",
@@ -59,6 +64,12 @@ const useStyles = makeStyles((theme) => ({
         marginRight: "2%",
         float: "right",
         height: "25px",
+    },
+    switch: {
+        marginRight: "2%",
+        float: "right",
+        height: "25px",
+        paddingTop: "3%",
     },
     // heading: {
     //     fontSize: theme.typography.pxToRem(15),
@@ -114,12 +125,35 @@ export default function ProfilePage(props) {
     const jwt = useSelector(selectJWT);
     const [userData, setUserData] = useState({ data: { attributes: { username: "" } } });
     const [bioFeild, setBioFeild] = useState("");
+    const [checked, setChecked] = useState(true);
     let history = useHistory();
     useEffect(() => {
         if (jwt === "") {
             history.push("/");
         }
     });
+
+    useEffect(() => {
+        if (!isEqual(userData, { data: { attributes: { username: "" } } })) {
+            fetch(`http://localhost:3000/users/priv`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "token": jwt,
+                },
+                method: "PUT",
+                body: JSON.stringify({
+                    user: {
+                        state: checked,
+                    },
+                }),
+            })
+                .then((resp) => resp.json())
+                .then((data) => {
+                    setUserData(data);
+                    setChecked(data.data.attributes.privacy);
+                });
+        }
+    }, [checked]);
 
     useEffect(() => {
         fetch(`http://localhost:3000/users`, {
@@ -130,11 +164,34 @@ export default function ProfilePage(props) {
             .then((resp) => resp.json())
             .then((data) => {
                 setUserData(data);
+                setChecked(data.data.attributes.privacy);
                 if (data.data.attributes.bio !== null) {
                     setBioFeild(data.data.attributes.bio);
                 }
             });
     }, []);
+
+    const updateBio = () => {
+        fetch(`http://localhost:3000/users/bio`, {
+            headers: {
+                "Content-Type": "application/json",
+                "token": jwt,
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                user: {
+                    bio: bioFeild,
+                },
+            }),
+        })
+            .then((resp) => resp.json())
+            .then((data) => {
+                setUserData(data);
+                if (data.data.attributes.bio !== null) {
+                    setBioFeild(data.data.attributes.bio);
+                }
+            });
+    };
 
     return (
         <div className={classes.root}>
@@ -143,10 +200,23 @@ export default function ProfilePage(props) {
                 <Typography variant="h5" className={classes.name}>
                     User: {userData.data.attributes.username}
                 </Typography>
+                <FormControlLabel
+                    className={classes.switch}
+                    control={
+                        <Switch
+                            checked={checked}
+                            onChange={(e) => setChecked(!checked)}
+                            name="privacy"
+                            color="primary"
+                        />
+                    }
+                    label={checked ? "Private" : "Public"}
+                />
+                <br />
                 <Typography variant="subtitle1" className={classes.bioLabel}>
                     Bio:
                 </Typography>
-                <Button variant="contained" color="primary" className={classes.saveButton}>
+                <Button variant="contained" color="primary" onClick={() => updateBio()} className={classes.saveButton}>
                     Save
                 </Button>
                 <TextField

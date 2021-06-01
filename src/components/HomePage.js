@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
         width: "97%",
         height: "100%",
         marginTop: "0vh",
+        backgroundColor: "#e9c46a",
     },
 }));
 

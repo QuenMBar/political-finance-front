@@ -16,10 +16,10 @@ import MapPage from "./components/MapPage";
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: "#e1bee7",
+            main: "#2a9d8f",
         },
         secondary: {
-            main: "#81c784",
+            main: "#e76f51",
         },
     },
 });
