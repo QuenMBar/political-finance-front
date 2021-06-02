@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import HomeIcon from "@material-ui/icons/Home";
 import { useHistory, useLocation } from "react-router-dom";
-import { Divider, Menu, MenuItem, Typography } from "@material-ui/core";
+import { Button, Divider, Menu, MenuItem, Typography } from "@material-ui/core";
 import { Fragment } from "react";
 import JsonWebToken from "jsonwebtoken";
 import PersonIcon from "@material-ui/icons/Person";
@@ -37,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: "1%",
     },
     divider: {
-        height: 28,
-        margin: 4,
+        marginRight: "4%",
     },
     searchDiv: {
         height: 40,
@@ -56,28 +55,32 @@ const useStyles = makeStyles((theme) => ({
     logoDiv: {
         // display: "inline-block",
         paddingLeft: "1%",
-        paddingRight: "5%",
+        paddingRight: "1%",
+        cursor: "pointer",
     },
     searchText: {
-        paddingTop: 12,
+        marginTop: 10,
+        height: "40px",
+        // backgroundColor: theme.palette.primary.light,
     },
     loginText: {
-        paddingTop: 12,
+        fontWeight: "normal",
+        fontSize: 18,
+    },
+    loginBttn: {
+        paddingTop: 10,
         display: "flex",
         float: "right",
         marginRight: "5%",
         marginLeft: "auto",
-        cursor: "pointer",
-        fontWeight: "normal",
+        marginTop: 10,
+        height: "40px",
     },
     profileIcon: {
         paddingTop: 6,
-        // display: "flex",
-        // float: "right",
-        // marginRight: "5%",
-        // marginLeft: "auto",
-        // cursor: "pointer",
-        // fontWeight: "normal",
+    },
+    menu: {
+        width: "180px",
     },
 }));
 
@@ -103,54 +106,68 @@ export default function NavBar(props) {
             {/* <IconButton className={classes.iconButton} onClick={() => dispatch(logout())} aria-label="home">
                 <HomeIcon />
             </IconButton> */}
-            <IconButton className={classes.iconButton} onClick={() => history.push(`/`)} aria-label="home">
+            {/* <IconButton className={classes.iconButton} onClick={() => history.push(`/`)} aria-label="home">
                 <HomeIcon />
-            </IconButton>
-            <Divider orientation="vertical" flexItem />
-            <div className={classes.logoDiv}>
+            </IconButton> */}
+            <div onClick={() => history.push(`/`)} className={classes.logoDiv}>
                 {/* <img src={icon} alt="League Icon" className={classes.icon} /> */}
                 <img src={Logo} alt="League of Challenges Logo" className={classes.logo} />
             </div>
-            <Typography variant="h6" component="h6" className={classes.searchText}>
-                Search Database
-            </Typography>
+            <Divider className={classes.divider} orientation="vertical" flexItem />
+            <Button className={classes.searchText}>
+                <Typography style={{ textDecoration: "underline", fontSize: 18 }} variant="subtitle1" component="p">
+                    Search Database
+                </Typography>
+            </Button>
             {JWT === "" || JWT === "undefined" ? (
                 location.pathname === "/login" ? (
-                    <Typography
-                        style={{ fontWeight: "bold" }}
-                        onClick={() => history.push(`/login`)}
-                        variant="h6"
-                        component="h6"
-                        className={classes.loginText}
-                    >
-                        Login/Sign Up
-                    </Typography>
+                    <Button onClick={() => history.push(`/login`)} className={classes.loginBttn}>
+                        <Typography
+                            style={{ fontWeight: "bold", textDecoration: "underline" }}
+                            variant="subtitle1"
+                            component="p"
+                            className={classes.loginText}
+                        >
+                            Login/Sign Up
+                        </Typography>
+                    </Button>
                 ) : (
-                    <Typography
-                        onClick={() => history.push(`/login`)}
-                        variant="h6"
-                        component="h6"
-                        className={classes.loginText}
-                    >
-                        Login/Sign Up
-                    </Typography>
+                    <Button onClick={() => history.push(`/login`)} className={classes.loginBttn}>
+                        <Typography
+                            className={classes.loginText}
+                            style={{ textDecoration: "underline" }}
+                            variant="subtitle1"
+                            component="p"
+                        >
+                            Login/Sign Up
+                        </Typography>
+                    </Button>
                 )
             ) : (
                 <Fragment>
-                    {location.pathname === "/login" ? (
+                    {location.pathname === "/profile" ? (
                         <Fragment>
-                            <Typography
-                                style={{ fontWeight: "bold" }}
-                                onClick={handleClick}
-                                variant="h6"
-                                component="h6"
-                                className={classes.loginText}
+                            <Button onClick={handleClick} className={classes.loginBttn}>
+                                <Typography
+                                    className={classes.loginText}
+                                    style={{ fontWeight: "bold", textDecoration: "underline" }}
+                                    variant="subtitle1"
+                                    component="p"
+                                >
+                                    {/* <PersonIcon className={classes.profileIcon} /> */}
+                                    {JsonWebToken.decode(JWT).user_name}
+                                </Typography>
+                            </Button>
+
+                            <Menu
+                                className={classes.menu}
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
                             >
-                                <PersonIcon className={classes.profileIcon} />
-                                {JsonWebToken.decode(JWT).user_name}
-                            </Typography>
-                            <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                                 <MenuItem
+                                    className={classes.menu}
                                     onClick={() => {
                                         history.push(`/profile`);
                                         handleClose();
@@ -160,6 +177,7 @@ export default function NavBar(props) {
                                 </MenuItem>
 
                                 <MenuItem
+                                    className={classes.menu}
                                     onClick={() => {
                                         dispatch(logout());
                                         handleClose();
@@ -171,18 +189,27 @@ export default function NavBar(props) {
                         </Fragment>
                     ) : (
                         <Fragment>
-                            <Typography
-                                // onClick={() => history.push(`/profile`)}
-                                onClick={handleClick}
-                                variant="h6"
-                                component="h6"
-                                className={classes.loginText}
+                            <Button onClick={handleClick} className={classes.loginBttn}>
+                                <Typography
+                                    className={classes.loginText}
+                                    // onClick={() => history.push(`/profile`)}
+                                    style={{ textDecoration: "underline" }}
+                                    variant="subtitle1"
+                                    component="p"
+                                >
+                                    {/* <PersonIcon className={classes.profileIcon} /> */}
+                                    {JsonWebToken.decode(JWT).user_name}
+                                </Typography>
+                            </Button>
+                            <Menu
+                                className={classes.menu}
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
                             >
-                                <PersonIcon className={classes.profileIcon} />
-                                {JsonWebToken.decode(JWT).user_name}
-                            </Typography>
-                            <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                                 <MenuItem
+                                    className={classes.menu}
                                     onClick={() => {
                                         history.push(`/profile`);
                                         handleClose();
@@ -192,6 +219,7 @@ export default function NavBar(props) {
                                 </MenuItem>
 
                                 <MenuItem
+                                    className={classes.menu}
                                     onClick={() => {
                                         dispatch(logout());
                                         handleClose();

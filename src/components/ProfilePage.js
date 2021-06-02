@@ -272,9 +272,10 @@ export default function ProfilePage(props) {
                                                         <Button>Select</Button>
                                                     ) : (
                                                         <Button
-                                                            onClick={() =>
-                                                                removeWatchlistItem(countyInfo.type, countyInfo.id)
-                                                            }
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(countyInfo.type, countyInfo.id);
+                                                            }}
                                                             variant="contained"
                                                             color="secondary"
                                                         >
@@ -344,9 +345,10 @@ export default function ProfilePage(props) {
                                                         <Button>Select</Button>
                                                     ) : (
                                                         <Button
-                                                            onClick={() =>
-                                                                removeWatchlistItem(zipInfo.type, zipInfo.id)
-                                                            }
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(zipInfo.type, zipInfo.id);
+                                                            }}
                                                             variant="contained"
                                                             color="secondary"
                                                         >
@@ -451,9 +453,10 @@ export default function ProfilePage(props) {
                                                         <Button>Select</Button>
                                                     ) : (
                                                         <Button
-                                                            onClick={() =>
-                                                                removeWatchlistItem(donation.type, donation.id)
-                                                            }
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(donation.type, donation.id);
+                                                            }}
                                                             variant="contained"
                                                             color="secondary"
                                                         >
