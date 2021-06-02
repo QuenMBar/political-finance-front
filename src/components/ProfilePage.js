@@ -234,6 +234,12 @@ export default function ProfilePage(props) {
                                     <TableCell className={classes.headers}>County Name</TableCell>
                                     <TableCell className={classes.headers}>County State</TableCell>
                                     <TableCell align="right" className={classes.headers}>
+                                        Dem Amount Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Rep Amount Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
                                         Total Amount Donated
                                     </TableCell>
                                     {jwt === "" ? null : (
@@ -261,6 +267,12 @@ export default function ProfilePage(props) {
                                             <TableCell component="th" scope="row" paddingRight="10px">
                                                 {countyInfo.attributes.state}
                                             </TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.dem_donation
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.rep_donation
+                                            )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
                                                 countyInfo.attributes.total_donated
                                             )}`}</TableCell>
@@ -301,6 +313,12 @@ export default function ProfilePage(props) {
                                     <TableCell className={classes.headers}>County Name</TableCell>
                                     <TableCell className={classes.headers}>County State</TableCell>
                                     <TableCell className={classes.headers} align="right">
+                                        Dem Amount Donated
+                                    </TableCell>
+                                    <TableCell className={classes.headers} align="right">
+                                        Rep Amount Donated
+                                    </TableCell>
+                                    <TableCell className={classes.headers} align="right">
                                         Total Amount Donated
                                     </TableCell>
                                     {jwt === "" ? null : (
@@ -334,6 +352,12 @@ export default function ProfilePage(props) {
                                             <TableCell component="th" scope="row" paddingRight="10px">
                                                 {countyInfo.attributes.state}
                                             </TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                zipInfo.attributes.dem_donation
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                zipInfo.attributes.rep_donation
+                                            )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
                                                 zipInfo.attributes.total_donated
                                             )}`}</TableCell>
@@ -378,6 +402,9 @@ export default function ProfilePage(props) {
                                         Entity Type
                                     </TableCell>
                                     <TableCell align="right" className={classes.headers}>
+                                        Party
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
                                         Committee
                                     </TableCell>
                                     <TableCell align="right" className={classes.headers}>
@@ -391,7 +418,7 @@ export default function ProfilePage(props) {
                                     </TableCell>
                                     {jwt === "" ? null : (
                                         <TableCell className={classes.headers} align="right">
-                                            Add to Watch List
+                                            Watch List
                                         </TableCell>
                                     )}
                                 </TableRow>
@@ -419,6 +446,7 @@ export default function ProfilePage(props) {
                                                 donation.attributes.amount
                                             )}`}</TableCell>
                                             <TableCell align="right">{donation.attributes.entity_type}</TableCell>
+                                            <TableCell align="right">{committee.attributes.comm_party}</TableCell>
                                             <TableCell align="right">{committee.attributes.comm_name}</TableCell>
                                             <TableCell align="right">{`${donation.attributes.city}, ${donation.attributes.state},  ${donation.attributes.zip}`}</TableCell>
                                             <TableCell align="right">{`${donation.attributes.employ}, ${donation.attributes.occu}`}</TableCell>

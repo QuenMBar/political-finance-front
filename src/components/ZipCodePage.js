@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 0,
     },
     tableContainer: {
-        height: "calc(95vh - 220px)",
+        height: "calc(95vh - 280px)",
     },
     name: {
         marginLeft: "5%",
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     infoDiv: {
         marginLeft: "15%",
         marginTop: "1%",
-        height: "90px",
+        height: "160px",
         width: "30%",
         position: "relative",
         textAlign: "left",
@@ -97,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "column",
         justifyContent: "space-around",
         paddingLeft: 15,
+        minWidth: "400px",
     },
     countyBttn: {
         position: "absolute",
@@ -119,7 +120,9 @@ export default function ZipCodePage() {
     const jwt = useSelector(selectJWT);
     const userWatch = useSelector(selectWatchList);
     const [countyData, setCountyData] = useState({
-        data: { attributes: { name: "", state: "", total_donated: 0 } },
+        data: {
+            attributes: { name: "", state: "", total_donated: 0, dem_donation: 0, rep_donation: 0 },
+        },
         included: [],
     });
     const dispatch = useDispatch();
@@ -130,20 +133,17 @@ export default function ZipCodePage() {
     let { id } = useParams();
 
     useEffect(() => {
-        const fetchCountyData = () => {
-            fetch(`http://localhost:3000/counties/${id}`, {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((data) => data.json())
-                .then((data) => {
-                    data.included.sort((a, b) => b.attributes.total_donated - a.attributes.total_donated);
-                    setCountyData(data);
-                });
-        };
-        fetchCountyData();
+        fetch(`http://localhost:3000/counties/${id}`, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((data) => data.json())
+            .then((data) => {
+                data.included.sort((a, b) => b.attributes.total_donated - a.attributes.total_donated);
+                setCountyData(data);
+            });
     }, [id]);
 
     const handleChangePage = (event, newPage) => {
@@ -208,9 +208,9 @@ export default function ZipCodePage() {
             <Paper className={classes.infoDiv}>
                 <Typography variant="h6"> County: {countyData.data.attributes.name}</Typography>
                 <Typography>State: {countyData.data.attributes.state}</Typography>
-                <Typography>
-                    Total Amount For County: ${numberWithCommas(countyData.data.attributes.total_donated)}
-                </Typography>
+                <Typography>Total Amount: ${numberWithCommas(countyData.data.attributes.total_donated)}</Typography>
+                <Typography>Dem Amount: ${numberWithCommas(countyData.data.attributes.dem_donation)}</Typography>
+                <Typography>Rep Amount: ${numberWithCommas(countyData.data.attributes.rep_donation)}</Typography>
                 {userWatch.find((o) => o.type === countyData.data.type && o.id === countyData.data.id) === undefined ? (
                     <Fragment>
                         <Typography className={classes.countyLabel}>Watchlist:</Typography>
@@ -254,6 +254,12 @@ export default function ZipCodePage() {
                             <TableRow>
                                 <TableCell className={classes.headers}>Zip Code</TableCell>
                                 <TableCell className={classes.headers} align="right">
+                                    Dem Amount Donated
+                                </TableCell>
+                                <TableCell className={classes.headers} align="right">
+                                    Rep Amount Donated
+                                </TableCell>
+                                <TableCell className={classes.headers} align="right">
                                     Total Amount Donated
                                 </TableCell>
                                 {jwt === "" ? null : (
@@ -277,6 +283,12 @@ export default function ZipCodePage() {
                                             <TableCell component="th" scope="row" paddingRight="10px">
                                                 {row.attributes.zip}
                                             </TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                row.attributes.dem_donation
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                row.attributes.rep_donation
+                                            )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
                                                 row.attributes.total_donated
                                             )}`}</TableCell>
