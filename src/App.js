@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import cyan from "@material-ui/core/colors/cyan";
-import red from "@material-ui/core/colors/red";
 import ErrorPage from "./components/ErrorPage";
 import NavBar from "./components/NavBar";
 import HomePage from "./components/HomePage";
@@ -12,6 +10,9 @@ import ProfilePage from "./components/ProfilePage";
 import ZipCodePage from "./components/ZipCodePage";
 import ConToZipPage from "./components/ConToZipPage";
 import MapPage from "./components/MapPage";
+import { makeStyles } from "@material-ui/core/styles";
+import { useSelector, useDispatch } from "react-redux";
+import { selectJWT, getRelationsAsync, selectWatchList } from "./redux/loginReducer";
 
 const theme = createMuiTheme({
     palette: {
@@ -24,9 +25,37 @@ const theme = createMuiTheme({
     },
 });
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        "@global": {
+            "*::-webkit-scrollbar": {
+                width: "6px",
+            },
+            "*::-webkit-scrollbar-track": {
+                "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+                "borderRadius": "5px",
+            },
+            "*::-webkit-scrollbar-thumb": {
+                backgroundColor: "rgba(0,96,100,.6)",
+                borderRadius: "5px",
+            },
+        },
+    },
+}));
+
 function App() {
+    const dispatch = useDispatch();
+    const jwt = useSelector(selectJWT);
+
+    useEffect(() => {
+        if (jwt !== "") {
+            dispatch(getRelationsAsync());
+        }
+    }, [jwt]);
+
+    const classes = useStyles();
     return (
-        <div className="App">
+        <div className={"App " + classes.root}>
             <ThemeProvider theme={theme}>
                 <Router>
                     <NavBar />

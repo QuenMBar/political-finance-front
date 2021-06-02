@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
     jwt: sessionStorage.getItem("jwtToken") || "",
     loginStatus: "",
+    userWatchListIds: [],
     status: "idle",
 };
 
@@ -11,7 +12,8 @@ const initialState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const loginAsync = createAsyncThunk("login/fetchUser", async (data) => {
+export const loginAsync = createAsyncThunk("login/fetchUser", async (data, actions) => {
+    // console.log(selectJWT(actions.getState()));
     const response = await fetchUser(data.username, data.password);
     return response.token;
 });
@@ -37,28 +39,39 @@ function fetchUser(username, password) {
     });
 }
 
+export const getRelationsAsync = createAsyncThunk("login/fetchWatchList", async (data, actions) => {
+    const response = await fetchWatchList(selectJWT(actions.getState()));
+    return response;
+});
+
+function fetchWatchList(jwt) {
+    return new Promise((resolve) => {
+        fetch("http://localhost:3000/users/relations", {
+            headers: {
+                token: jwt,
+            },
+        })
+            .then((data) => data.json())
+            .then((data) => {
+                let array = [];
+                array = array
+                    .concat(data.data.relationships.counties.data)
+                    .concat(data.data.relationships.individual_donations.data)
+                    .concat(data.data.relationships.zip_codes.data);
+                resolve(array);
+            });
+    });
+}
+
 export const loginReducer = createSlice({
     name: "login",
     initialState,
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
-        // increment: (state) => {
-        //     // Redux Toolkit allows us to write "mutating" logic in reducers. It
-        //     // doesn't actually mutate the state because it uses the Immer library,
-        //     // which detects changes to a "draft state" and produces a brand new
-        //     // immutable state based off those changes
-        //     state.value += 1;
-        // },
-        // decrement: (state) => {
-        //     state.value -= 1;
-        // },
-        // // Use the PayloadAction type to declare the contents of `action.payload`
-        // incrementByAmount: (state, action) => {
-        //     state.value += action.payload;
-        // },
         logout: (state) => {
             sessionStorage.removeItem("jwtToken");
             state.jwt = "";
+            state.userWatchListIds = [];
         },
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -78,6 +91,13 @@ export const loginReducer = createSlice({
                     sessionStorage.setItem("jwtToken", action.payload);
                     state.loginStatus = "";
                 }
+            })
+            .addCase(getRelationsAsync.fulfilled, (state, action) => {
+                if (!Array.isArray(action.payload)) {
+                    state.userWatchListIds = [];
+                } else {
+                    state.userWatchListIds = action.payload;
+                }
             });
     },
 });
@@ -90,13 +110,18 @@ export const { logout } = loginReducer.actions;
 export const selectJWT = (state) => {
     return state.login.jwt;
 };
+
+export const selectWatchList = (state) => {
+    return state.login.userWatchListIds;
+};
+
 export const selectStatus = (state) => {
     return state.login.loginStatus;
 };
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
-// export const incrementIfOdd = (amount) => (dispatch, getState) => {
+// export const getRelationsAsync = () => (dispatch, getState) => {
 //     const currentValue = selectCount(getState());
 //     if (currentValue % 2 === 1) {
 //         dispatch(incrementByAmount(amount));
