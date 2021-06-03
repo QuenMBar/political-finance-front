@@ -12,7 +12,7 @@ import ConToZipPage from "./components/ConToZipPage";
 import MapPage from "./components/MapPage";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
-import { selectJWT, getRelationsAsync, selectWatchList } from "./redux/loginReducer";
+import { selectJWT, getRelationsAsync } from "./redux/loginReducer";
 import SearchPage from "./components/SearchPage";
 
 const theme = createMuiTheme({

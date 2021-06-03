@@ -1,10 +1,8 @@
 import {
     Typography,
     Paper,
-    TextField,
     Button,
     FormControlLabel,
-    Switch,
     TableCell,
     TableRow,
     TableBody,
@@ -13,9 +11,6 @@ import {
     TableContainer,
     IconButton,
     InputBase,
-    Divider,
-    FormLabel,
-    FormControl,
     FormGroup,
     Checkbox,
     TablePagination,
@@ -25,7 +20,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { getRelationsAsync, selectJWT, selectWatchList } from "../redux/loginReducer";
 import { useHistory } from "react-router-dom";
-import { isEqual } from "lodash";
 import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme) => ({
@@ -184,8 +178,6 @@ export default function SearchPage(props) {
     const jwt = useSelector(selectJWT);
     const dispatch = useDispatch();
     const userWatch = useSelector(selectWatchList);
-    const [userData, setUserData] = useState({ data: { attributes: { username: "" } } });
-    const [bioFeild, setBioFeild] = useState("");
     const [checked, setChecked] = useState({ id: true, zc: true, cou: true, usr: true });
     const [saveChecked, setSaveChecked] = useState({ id: true, zc: true, cou: true, usr: true });
     const [searchText, setSearchText] = useState("");
@@ -195,48 +187,8 @@ export default function SearchPage(props) {
     const [saveSearch, setSaveSearch] = useState("");
     let history = useHistory();
 
-    const updateInfo = () => {
-        fetch(`http://localhost:3000/users`, {
-            headers: {
-                token: jwt,
-            },
-        })
-            .then((resp) => resp.json())
-            .then((data) => {
-                setUserData(data);
-                setChecked(data.data.attributes.privacy);
-                if (data.data.attributes.bio !== null) {
-                    setBioFeild(data.data.attributes.bio);
-                }
-            });
-    };
-
     const handleChange = (event) => {
         setChecked({ ...checked, [event.target.name]: event.target.checked });
-    };
-
-    console.log(checked);
-
-    const updateBio = () => {
-        fetch(`http://localhost:3000/users/bio`, {
-            headers: {
-                "Content-Type": "application/json",
-                "token": jwt,
-            },
-            method: "PUT",
-            body: JSON.stringify({
-                user: {
-                    bio: bioFeild,
-                },
-            }),
-        })
-            .then((resp) => resp.json())
-            .then((data) => {
-                setUserData(data);
-                if (data.data.attributes.bio !== null) {
-                    setBioFeild(data.data.attributes.bio);
-                }
-            });
     };
 
     const numberWithCommas = (x) => {
@@ -394,7 +346,7 @@ export default function SearchPage(props) {
                                     return (
                                         <TableRow
                                             // onClick={() => history.push(`/zip/${row.id}`)}
-                                            key={row.id}
+                                            key={row.object.id}
                                             hover
                                             tabIndex={-1}
                                         >
@@ -461,7 +413,7 @@ export default function SearchPage(props) {
                                     return (
                                         <TableRow
                                             onClick={() => history.push(`/county/${row.object.fids}`)}
-                                            key={row.id}
+                                            key={row.object.fids}
                                             hover
                                             tabIndex={-1}
                                         >
@@ -526,7 +478,7 @@ export default function SearchPage(props) {
                                     return (
                                         <TableRow
                                             onClick={() => history.push(`/zip/${row.object.zip}`)}
-                                            key={row.id}
+                                            key={row.object.zip}
                                             hover
                                             tabIndex={-1}
                                         >

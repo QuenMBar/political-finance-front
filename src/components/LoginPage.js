@@ -5,7 +5,6 @@ import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { loginAsync, selectJWT, selectStatus } from "../redux/loginReducer";
-import { Fragment } from "react";
 
 const useStyles = makeStyles((theme) => ({
     root: {

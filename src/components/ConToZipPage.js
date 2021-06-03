@@ -10,7 +10,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ControlPanel from "./control-panel";
 import { selectChecked } from "../redux/donationReducer";
 
@@ -150,29 +150,9 @@ export default function ConToZipPage() {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
-    const [maxPage, setMaxPage] = React.useState(1);
-    const history = useHistory();
     const donationCheck = useSelector(selectChecked);
 
     let { id } = useParams();
-
-    // useEffect(() => {
-    //     const fetchCountyData = () => {
-    //         fetch(`http://localhost:3000/counties/${id}`, {
-    //             method: "get",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //         })
-    //             .then((data) => data.json())
-    //             .then((data) => {
-    //                 console.log(data);
-    //                 data.included.sort((a, b) => b.attributes.total_donated - a.attributes.total_donated);
-    //                 setCountyData(data);
-    //             });
-    //     };
-    //     fetchCountyData();
-    // }, [id]);
 
     useEffect(() => {
         fetch(`http://localhost:3000/zip_codes/${id}`, {
@@ -186,7 +166,6 @@ export default function ConToZipPage() {
         })
             .then((data) => data.json())
             .then((data) => {
-                // console.log(data.zip.included[0].attributes.name);
                 setDonationData(data);
             });
     }, [page, rowsPerPage, id, donationCheck]);
