@@ -262,6 +262,8 @@ export default function SearchPage(props) {
             });
     };
 
+    console.log(userWatch);
+
     return (
         <div className={classes.root}>
             <Paper className={classes.profile}>
@@ -371,7 +373,8 @@ export default function SearchPage(props) {
                                                 <TableCell align="right">
                                                     {userWatch.find(
                                                         (o) =>
-                                                            o.type === "individual_donation" && o.id === row.object.id
+                                                            o.type === "individual_donation" &&
+                                                            o.id === row.object.id.toString()
                                                     ) === undefined ? (
                                                         <Button
                                                             onClick={(e) => {
