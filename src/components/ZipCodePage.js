@@ -99,6 +99,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "space-around",
         paddingLeft: 15,
         minWidth: "400px",
+        backgroundColor: "#FAF1DC",
     },
     countyBttn: {
         position: "absolute",

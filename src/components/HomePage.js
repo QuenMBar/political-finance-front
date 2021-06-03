@@ -7,7 +7,7 @@ import { Paper } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
     map: {
         width: "78%",
-        height: "86%",
+        height: "calc(96% - 60px)",
         marginLeft: "1%",
         marginTop: "1%",
         marginBottom: "1%",
@@ -15,21 +15,21 @@ const useStyles = makeStyles((theme) => ({
     },
     graph: {
         width: "22%",
-        height: "90%",
+        height: "calc(100% - 60px)",
         marginLeft: "79%",
         position: "absolute",
     },
     contain: {
         width: "100vw",
-        height: "90vh",
-        marginTop: "2vh",
-        marginLeft: "2%",
+        height: "calc(100vh - 60px)",
+        // marginTop: "2vh",
+        // marginLeft: "2%",
     },
     containPap: {
-        width: "97%",
+        width: "100%",
         height: "100%",
         marginTop: "0vh",
-        backgroundColor: "#e9c46a",
+        backgroundColor: "#F7EACA",
     },
 }));
 

@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "15%",
         marginTop: "1.5%",
         textAlign: "left",
-        backgroundColor: "#e9c46a",
+        backgroundColor: "#F7EACA",
     },
     watchlist: {
         width: "70%",
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "2%",
         width: "calc(95% - 40px)",
         // height: "80px",
-        backgroundColor: "#ffe8d6",
+        backgroundColor: "#FCF8ED",
     },
     bioLabel: {
         marginLeft: "2%",
@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
         margin: 4,
     },
     searchDiv: {
-        backgroundColor: "#ffe8d6",
+        backgroundColor: "#FCF8ED",
         width: "calc(90% - 150px)",
         position: "absolute",
         top: 7,
