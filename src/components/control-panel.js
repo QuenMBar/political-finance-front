@@ -46,7 +46,6 @@ export default function ControlPanel(props) {
                                 size="small"
                                 checked={checked.id}
                                 onClick={(e) => {
-                                    // e.stopPropagation();
                                     handleChange(e);
                                 }}
                                 name="id"
@@ -55,11 +54,11 @@ export default function ControlPanel(props) {
                         label="Individual Donations"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked.org} onChange={handleChange} name="org" />}
+                        control={<Checkbox size="small" checked={checked.org} onChange={handleChange} name="org" />}
                         label="Organization Donations"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked.com} onChange={handleChange} name="com" />}
+                        control={<Checkbox size="small" checked={checked.com} onChange={handleChange} name="com" />}
                         label="Committee Donations"
                     />
                 </FormGroup>

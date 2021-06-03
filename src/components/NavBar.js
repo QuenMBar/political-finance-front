@@ -114,7 +114,7 @@ export default function NavBar(props) {
                 <img src={Logo} alt="League of Challenges Logo" className={classes.logo} />
             </div>
             <Divider className={classes.divider} orientation="vertical" flexItem />
-            <Button className={classes.searchText}>
+            <Button onClick={() => history.push(`/search`)} className={classes.searchText}>
                 <Typography style={{ textDecoration: "underline", fontSize: 18 }} variant="subtitle1" component="p">
                     Search Database
                 </Typography>
