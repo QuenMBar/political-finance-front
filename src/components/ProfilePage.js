@@ -234,13 +234,22 @@ export default function ProfilePage(props) {
                                     <TableCell className={classes.headers}>County Name</TableCell>
                                     <TableCell className={classes.headers}>County State</TableCell>
                                     <TableCell align="right" className={classes.headers}>
-                                        Dem Amount Donated
+                                        Total Donated
                                     </TableCell>
                                     <TableCell align="right" className={classes.headers}>
-                                        Rep Amount Donated
+                                        Dem Donated
                                     </TableCell>
                                     <TableCell align="right" className={classes.headers}>
-                                        Total Amount Donated
+                                        Rep Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Individual Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Organization Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Committee Donated
                                     </TableCell>
                                     {jwt === "" ? null : (
                                         <TableCell align="right" className={classes.headers}>
@@ -268,13 +277,34 @@ export default function ProfilePage(props) {
                                                 {countyInfo.attributes.state}
                                             </TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                countyInfo.attributes.dem_donation
+                                                countyInfo.attributes.total_donated +
+                                                    countyInfo.attributes.total_donated_org +
+                                                    countyInfo.attributes.total_donated_com
                                             )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                countyInfo.attributes.rep_donation
+                                                countyInfo.attributes.dem_donation +
+                                                    countyInfo.attributes.dem_donation_org +
+                                                    countyInfo.attributes.dem_donation_com
                                             )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                countyInfo.attributes.total_donated
+                                                countyInfo.attributes.rep_donation +
+                                                    countyInfo.attributes.rep_donation_org +
+                                                    countyInfo.attributes.rep_donation_com
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated +
+                                                    countyInfo.attributes.dem_donation +
+                                                    countyInfo.attributes.rep_donation
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated_org +
+                                                    countyInfo.attributes.dem_donation_org +
+                                                    countyInfo.attributes.rep_donation_org
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated_com +
+                                                    countyInfo.attributes.dem_donation_com +
+                                                    countyInfo.attributes.rep_donation_com
                                             )}`}</TableCell>
                                             {jwt === "" ? null : (
                                                 <TableCell align="right">
@@ -312,14 +342,23 @@ export default function ProfilePage(props) {
                                     <TableCell className={classes.headers}>Zip Code</TableCell>
                                     <TableCell className={classes.headers}>County Name</TableCell>
                                     <TableCell className={classes.headers}>County State</TableCell>
-                                    <TableCell className={classes.headers} align="right">
-                                        Dem Amount Donated
+                                    <TableCell align="right" className={classes.headers}>
+                                        Total Donated
                                     </TableCell>
-                                    <TableCell className={classes.headers} align="right">
-                                        Rep Amount Donated
+                                    <TableCell align="right" className={classes.headers}>
+                                        Dem Donated
                                     </TableCell>
-                                    <TableCell className={classes.headers} align="right">
-                                        Total Amount Donated
+                                    <TableCell align="right" className={classes.headers}>
+                                        Rep Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Individual Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Organization Donated
+                                    </TableCell>
+                                    <TableCell align="right" className={classes.headers}>
+                                        Committee Donated
                                     </TableCell>
                                     {jwt === "" ? null : (
                                         <TableCell className={classes.headers} align="right">
@@ -353,13 +392,34 @@ export default function ProfilePage(props) {
                                                 {countyInfo.attributes.state}
                                             </TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                zipInfo.attributes.dem_donation
+                                                countyInfo.attributes.total_donated +
+                                                    countyInfo.attributes.total_donated_org +
+                                                    countyInfo.attributes.total_donated_com
                                             )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                zipInfo.attributes.rep_donation
+                                                countyInfo.attributes.dem_donation +
+                                                    countyInfo.attributes.dem_donation_org +
+                                                    countyInfo.attributes.dem_donation_com
                                             )}`}</TableCell>
                                             <TableCell align="right">{`$${numberWithCommas(
-                                                zipInfo.attributes.total_donated
+                                                countyInfo.attributes.rep_donation +
+                                                    countyInfo.attributes.rep_donation_org +
+                                                    countyInfo.attributes.rep_donation_com
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated +
+                                                    countyInfo.attributes.dem_donation +
+                                                    countyInfo.attributes.rep_donation
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated_org +
+                                                    countyInfo.attributes.dem_donation_org +
+                                                    countyInfo.attributes.rep_donation_org
+                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                countyInfo.attributes.total_donated_com +
+                                                    countyInfo.attributes.dem_donation_com +
+                                                    countyInfo.attributes.rep_donation_com
                                             )}`}</TableCell>
                                             {jwt === "" ? null : (
                                                 <TableCell align="right">

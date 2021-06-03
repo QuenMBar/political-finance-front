@@ -35,7 +35,7 @@ export default function GraphPage() {
     };
 
     return (
-        <VictoryChart height={1050} domainPadding={50} theme={chartTheme} animate={{ duration: 1000 }}>
+        <VictoryChart height={1050} domainPadding={50} theme={chartTheme} animate={{ duration: 1200 }}>
             <VictoryAxis tickValues={[1, 2]} tickFormat={["Dem", "Rep", "Other"]} />
             <VictoryAxis dependentAxis tickFormat={(x) => `$${numberWithCommas(x)}`} />
 

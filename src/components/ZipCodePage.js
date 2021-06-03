@@ -11,6 +11,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { useHistory, useParams } from "react-router-dom";
+import ControlPanel from "./control-panel";
+import { selectChecked } from "../redux/donationReducer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -88,7 +90,6 @@ const useStyles = makeStyles((theme) => ({
     },
     infoDiv: {
         marginLeft: "15%",
-        marginTop: "1%",
         height: "160px",
         width: "30%",
         position: "relative",
@@ -114,6 +115,23 @@ const useStyles = makeStyles((theme) => ({
         right: 35,
         top: 38,
     },
+    contolPaper: {
+        opacity: 0.6,
+        background: "rgb(61, 61, 61)",
+        // margin: "20px",
+        padding: "12px 24px",
+        width: "25%",
+        height: "160px",
+        marginLeft: "15%",
+    },
+    wrapper: {
+        display: "flex",
+        height: "160px",
+        // marginTop: "1%",
+        // position: "relative",
+        marginTop: "1%",
+        width: "100%",
+    },
 }));
 
 export default function ZipCodePage() {
@@ -131,6 +149,7 @@ export default function ZipCodePage() {
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const history = useHistory();
     let { id } = useParams();
+    const donationCheck = useSelector(selectChecked);
 
     useEffect(() => {
         fetch(`http://localhost:3000/counties/${id}`, {
@@ -203,44 +222,69 @@ export default function ZipCodePage() {
             });
     };
 
+    let totalAmout = 0.0;
+    let demAmout = 0.0;
+    let repAmout = 0.0;
+    if (donationCheck.id) {
+        totalAmout += countyData.data.attributes.total_donated;
+        demAmout += countyData.data.attributes.dem_donation;
+        repAmout += countyData.data.attributes.rep_donation;
+    }
+    if (donationCheck.org) {
+        totalAmout += countyData.data.attributes.total_donated_org;
+        demAmout += countyData.data.attributes.dem_donation_org;
+        repAmout += countyData.data.attributes.rep_donation_org;
+    }
+    if (donationCheck.com) {
+        totalAmout += countyData.data.attributes.total_donated_com;
+        demAmout += countyData.data.attributes.dem_donation_com;
+        repAmout += countyData.data.attributes.rep_donation_com;
+    }
+
     return (
         <Fragment>
-            <Paper className={classes.infoDiv}>
-                <Typography variant="h6"> County: {countyData.data.attributes.name}</Typography>
-                <Typography>State: {countyData.data.attributes.state}</Typography>
-                <Typography>Total Amount: ${numberWithCommas(countyData.data.attributes.total_donated)}</Typography>
-                <Typography>Dem Amount: ${numberWithCommas(countyData.data.attributes.dem_donation)}</Typography>
-                <Typography>Rep Amount: ${numberWithCommas(countyData.data.attributes.rep_donation)}</Typography>
-                {userWatch.find((o) => o.type === countyData.data.type && o.id === countyData.data.id) === undefined ? (
-                    <Fragment>
-                        <Typography className={classes.countyLabel}>Watchlist:</Typography>
-                        <Button
-                            className={classes.countyBttnSelect}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                addWatchlistItem(countyData.data.type, countyData.data.id);
-                            }}
-                        >
-                            Select
-                        </Button>
-                    </Fragment>
-                ) : (
-                    <Fragment>
-                        <Typography className={classes.countyLabel}>Watchlist:</Typography>
-                        <Button
-                            className={classes.countyBttn}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                removeWatchlistItem(countyData.data.type, countyData.data.id);
-                            }}
-                            variant="contained"
-                            color="secondary"
-                        >
-                            Deselect
-                        </Button>
-                    </Fragment>
-                )}
-            </Paper>
+            <div className={classes.wrapper}>
+                <Paper className={classes.infoDiv}>
+                    <Typography variant="h6"> County: {countyData.data.attributes.name}</Typography>
+                    <Typography>State: {countyData.data.attributes.state}</Typography>
+                    <Typography>Total Amount: ${numberWithCommas(totalAmout)}</Typography>
+                    <Typography>Dem Amount: ${numberWithCommas(demAmout)}</Typography>
+                    <Typography>Rep Amount: ${numberWithCommas(repAmout)}</Typography>
+                    {userWatch.find((o) => o.type === countyData.data.type && o.id === countyData.data.id) ===
+                    undefined ? (
+                        <Fragment>
+                            <Typography className={classes.countyLabel}>Watchlist:</Typography>
+                            <Button
+                                className={classes.countyBttnSelect}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    addWatchlistItem(countyData.data.type, countyData.data.id);
+                                }}
+                            >
+                                Select
+                            </Button>
+                        </Fragment>
+                    ) : (
+                        <Fragment>
+                            <Typography className={classes.countyLabel}>Watchlist:</Typography>
+                            <Button
+                                className={classes.countyBttn}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeWatchlistItem(countyData.data.type, countyData.data.id);
+                                }}
+                                variant="contained"
+                                color="secondary"
+                            >
+                                Deselect
+                            </Button>
+                        </Fragment>
+                    )}
+                </Paper>
+                <Paper className={classes.contolPaper}>
+                    <ControlPanel className="control-page" />
+                </Paper>
+            </div>
             <Paper className={classes.watchlist}>
                 <TableContainer component={Paper} className={classes.tableContainer}>
                     <Table
@@ -254,13 +298,13 @@ export default function ZipCodePage() {
                             <TableRow>
                                 <TableCell className={classes.headers}>Zip Code</TableCell>
                                 <TableCell className={classes.headers} align="right">
+                                    Total Amount Donated
+                                </TableCell>
+                                <TableCell className={classes.headers} align="right">
                                     Dem Amount Donated
                                 </TableCell>
                                 <TableCell className={classes.headers} align="right">
                                     Rep Amount Donated
-                                </TableCell>
-                                <TableCell className={classes.headers} align="right">
-                                    Total Amount Donated
                                 </TableCell>
                                 {jwt === "" ? null : (
                                     <TableCell className={classes.headers} align="right">
@@ -271,8 +315,43 @@ export default function ZipCodePage() {
                         </TableHead>
                         <TableBody>
                             {countyData.included
+                                .sort((a, b) => {
+                                    let totalAmouta = 0.0;
+                                    let totalAmoutb = 0.0;
+                                    if (donationCheck.id) {
+                                        totalAmouta += a.attributes.total_donated;
+                                        totalAmoutb += b.attributes.total_donated;
+                                    }
+                                    if (donationCheck.org) {
+                                        totalAmouta += a.attributes.total_donated_org;
+                                        totalAmoutb += b.attributes.total_donated_org;
+                                    }
+                                    if (donationCheck.com) {
+                                        totalAmouta += a.attributes.total_donated_com;
+                                        totalAmoutb += b.attributes.total_donated_com;
+                                    }
+                                    return totalAmoutb - totalAmouta;
+                                })
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
+                                    let totalAmout = 0.0;
+                                    let demAmout = 0.0;
+                                    let repAmout = 0.0;
+                                    if (donationCheck.id) {
+                                        totalAmout += row.attributes.total_donated;
+                                        demAmout += row.attributes.dem_donation;
+                                        repAmout += row.attributes.rep_donation;
+                                    }
+                                    if (donationCheck.org) {
+                                        totalAmout += row.attributes.total_donated_org;
+                                        demAmout += row.attributes.dem_donation_org;
+                                        repAmout += row.attributes.rep_donation_org;
+                                    }
+                                    if (donationCheck.com) {
+                                        totalAmout += row.attributes.total_donated_com;
+                                        demAmout += row.attributes.dem_donation_com;
+                                        repAmout += row.attributes.rep_donation_com;
+                                    }
                                     return (
                                         <TableRow
                                             onClick={() => history.push(`/zip/${row.id}`)}
@@ -283,15 +362,9 @@ export default function ZipCodePage() {
                                             <TableCell component="th" scope="row" paddingRight="10px">
                                                 {row.attributes.zip}
                                             </TableCell>
-                                            <TableCell align="right">{`$${numberWithCommas(
-                                                row.attributes.dem_donation
-                                            )}`}</TableCell>
-                                            <TableCell align="right">{`$${numberWithCommas(
-                                                row.attributes.rep_donation
-                                            )}`}</TableCell>
-                                            <TableCell align="right">{`$${numberWithCommas(
-                                                row.attributes.total_donated
-                                            )}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(totalAmout)}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(demAmout)}`}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(repAmout)}`}</TableCell>
                                             {jwt === "" ? null : (
                                                 <TableCell align="right">
                                                     {userWatch.find((o) => o.type === row.type && o.id === row.id) ===

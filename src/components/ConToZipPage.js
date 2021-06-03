@@ -11,6 +11,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { useHistory, useParams } from "react-router-dom";
+import ControlPanel from "./control-panel";
+import { selectChecked } from "../redux/donationReducer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -88,7 +90,6 @@ const useStyles = makeStyles((theme) => ({
     },
     infoDiv: {
         marginLeft: "15%",
-        marginTop: "1%",
         height: "160px",
         width: "30%",
         position: "relative",
@@ -114,6 +115,23 @@ const useStyles = makeStyles((theme) => ({
         right: 35,
         top: 38,
     },
+    contolPaper: {
+        opacity: 0.6,
+        background: "rgb(61, 61, 61)",
+        // margin: "20px",
+        padding: "12px 24px",
+        width: "25%",
+        height: "160px",
+        marginLeft: "15%",
+    },
+    wrapper: {
+        display: "flex",
+        height: "160px",
+        // marginTop: "1%",
+        // position: "relative",
+        marginTop: "1%",
+        width: "100%",
+    },
 }));
 
 export default function ConToZipPage() {
@@ -134,6 +152,8 @@ export default function ConToZipPage() {
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const [maxPage, setMaxPage] = React.useState(1);
     const history = useHistory();
+    const donationCheck = useSelector(selectChecked);
+
     let { id } = useParams();
 
     // useEffect(() => {
@@ -161,6 +181,7 @@ export default function ConToZipPage() {
                 "Content-Type": "application/json",
                 "page": page + 1,
                 "amount": rowsPerPage,
+                "donationCheck": JSON.stringify(donationCheck),
             },
         })
             .then((data) => data.json())
@@ -168,7 +189,7 @@ export default function ConToZipPage() {
                 // console.log(data.zip.included[0].attributes.name);
                 setDonationData(data);
             });
-    }, [page, rowsPerPage, id]);
+    }, [page, rowsPerPage, id, donationCheck]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -229,48 +250,59 @@ export default function ConToZipPage() {
 
     return (
         <Fragment>
-            <Paper className={classes.infoDiv}>
-                <Typography variant="h6"> County: {donationData.zip.data.attributes.zip}</Typography>
-                <Typography>
-                    County/State: {donationData.zip.included[0].attributes.name},{" "}
-                    {donationData.zip.included[0].attributes.state}
-                </Typography>
-                <Typography>
-                    Total Amount: ${numberWithCommas(donationData.zip.data.attributes.total_donated)}
-                </Typography>
-                <Typography>Dem Amount: ${numberWithCommas(donationData.zip.data.attributes.dem_donation)}</Typography>
-                <Typography>Rep Amount: ${numberWithCommas(donationData.zip.data.attributes.rep_donation)}</Typography>
-                {userWatch.find((o) => o.type === donationData.zip.data.type && o.id === donationData.zip.data.id) ===
-                undefined ? (
-                    <Fragment>
-                        <Typography className={classes.countyLabel}>Watchlist:</Typography>
-                        <Button
-                            className={classes.countyBttnSelect}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                addWatchlistItem(donationData.zip.data.type, donationData.zip.data.id);
-                            }}
-                        >
-                            Select
-                        </Button>
-                    </Fragment>
-                ) : (
-                    <Fragment>
-                        <Typography className={classes.countyLabel}>Watchlist:</Typography>
-                        <Button
-                            className={classes.countyBttn}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                removeWatchlistItem(donationData.data.type, donationData.data.id);
-                            }}
-                            variant="contained"
-                            color="secondary"
-                        >
-                            Deselect
-                        </Button>
-                    </Fragment>
-                )}
-            </Paper>
+            <div className={classes.wrapper}>
+                <Paper className={classes.infoDiv}>
+                    <Typography variant="h6"> County: {donationData.zip.data.attributes.zip}</Typography>
+                    <Typography>
+                        County/State: {donationData.zip.included[0].attributes.name},{" "}
+                        {donationData.zip.included[0].attributes.state}
+                    </Typography>
+                    <Typography>
+                        Total Amount: ${numberWithCommas(donationData.zip.data.attributes.total_donated)}
+                    </Typography>
+                    <Typography>
+                        Dem Amount: ${numberWithCommas(donationData.zip.data.attributes.dem_donation)}
+                    </Typography>
+                    <Typography>
+                        Rep Amount: ${numberWithCommas(donationData.zip.data.attributes.rep_donation)}
+                    </Typography>
+                    {userWatch.find(
+                        (o) => o.type === donationData.zip.data.type && o.id === donationData.zip.data.id
+                    ) === undefined ? (
+                        <Fragment>
+                            <Typography className={classes.countyLabel}>Watchlist:</Typography>
+                            <Button
+                                className={classes.countyBttnSelect}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    addWatchlistItem(donationData.zip.data.type, donationData.zip.data.id);
+                                }}
+                            >
+                                Select
+                            </Button>
+                        </Fragment>
+                    ) : (
+                        <Fragment>
+                            <Typography className={classes.countyLabel}>Watchlist:</Typography>
+                            <Button
+                                className={classes.countyBttn}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeWatchlistItem(donationData.data.type, donationData.data.id);
+                                }}
+                                variant="contained"
+                                color="secondary"
+                            >
+                                Deselect
+                            </Button>
+                        </Fragment>
+                    )}
+                </Paper>
+                <Paper className={classes.contolPaper}>
+                    <ControlPanel className="control-page" />
+                </Paper>
+            </div>
+
             <Paper className={classes.watchlist}>
                 <TableContainer component={Paper} className={classes.tableContainer}>
                     <Table
@@ -334,7 +366,21 @@ export default function ConToZipPage() {
                                         <TableCell align="right">{committee.attributes.comm_name}</TableCell>
                                         <TableCell align="right">{`${row.attributes.city}, ${row.attributes.state},  ${row.attributes.zip}`}</TableCell>
                                         <TableCell align="right">{`${row.attributes.employ}, ${row.attributes.occu}`}</TableCell>
-                                        <TableCell align="right">{row.attributes.date}</TableCell>
+                                        <TableCell align="right">
+                                            {`${row.attributes.date
+                                                .toString()
+                                                .substring(
+                                                    row.attributes.date.toString().length - 8,
+                                                    row.attributes.date.toString().length - 6
+                                                )}-${row.attributes.date
+                                                .toString()
+                                                .substring(
+                                                    row.attributes.date.toString().length - 6,
+                                                    row.attributes.date.toString().length - 4
+                                                )}-${row.attributes.date
+                                                .toString()
+                                                .substring(row.attributes.date.toString().length - 4)}`}
+                                        </TableCell>
 
                                         {jwt === "" ? null : (
                                             <TableCell align="right">

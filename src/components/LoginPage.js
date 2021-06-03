@@ -69,6 +69,10 @@ export default function LoginPage(props) {
             .then((data) => data.json())
             .then((data) => {
                 setSignUpStatus(data.msg);
+                if (data.msg === "Please Login") {
+                    setSignUpUser("");
+                    setSignUpPass("");
+                }
             });
     };
 
