@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     },
     watchlist: {
         width: "70%",
-        height: "calc(calc(94vh - 260px) - 1%)",
+        height: "calc(calc(94vh - 180px) - 1%)",
         marginLeft: "15%",
         marginTop: "1%",
         marginBottom: 0,
@@ -115,6 +115,68 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 30,
         color: "black",
     },
+    paper: {
+        width: "100%",
+        marginBottom: theme.spacing(2),
+    },
+    visuallyHidden: {
+        border: 0,
+        clip: "rect(0 0 0 0)",
+        height: 1,
+        margin: -1,
+        overflow: "hidden",
+        padding: 0,
+        position: "absolute",
+        top: 20,
+        width: 1,
+    },
+    tableContainer: {
+        height: "calc(95vh - 250px)",
+    },
+    infoDiv: {
+        marginLeft: "15%",
+        height: "160px",
+        width: "30%",
+        position: "relative",
+        textAlign: "left",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-around",
+        paddingLeft: 15,
+        minWidth: "400px",
+    },
+    countyBttn: {
+        position: "absolute",
+        right: 10,
+        top: 38,
+    },
+    countyLabel: {
+        position: "absolute",
+        right: 34,
+        top: 12,
+    },
+    countyBttnSelect: {
+        position: "absolute",
+        right: 35,
+        top: 38,
+    },
+    contolPaper: {
+        opacity: 0.6,
+        background: "rgb(61, 61, 61)",
+        // margin: "20px",
+        padding: "12px 24px",
+        width: "25%",
+        height: "160px",
+        marginLeft: "15%",
+    },
+    wrapper: {
+        display: "flex",
+        height: "160px",
+        // marginTop: "1%",
+        // position: "relative",
+        marginTop: "1%",
+        width: "100%",
+    },
 }));
 
 export default function SearchPage(props) {
@@ -125,35 +187,13 @@ export default function SearchPage(props) {
     const [userData, setUserData] = useState({ data: { attributes: { username: "" } } });
     const [bioFeild, setBioFeild] = useState("");
     const [checked, setChecked] = useState({ id: true, zc: true, cou: true, usr: true });
+    const [saveChecked, setSaveChecked] = useState({ id: true, zc: true, cou: true, usr: true });
     const [searchText, setSearchText] = useState("");
     const [results, setResults] = useState([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(20);
+    const [saveSearch, setSaveSearch] = useState("");
     let history = useHistory();
-
-    // useEffect(() => {
-    //     if (!isEqual(userData, { data: { attributes: { username: "" } } })) {
-    //         fetch(`http://localhost:3000/users/priv`, {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "token": jwt,
-    //             },
-    //             method: "PUT",
-    //             body: JSON.stringify({
-    //                 user: {
-    //                     state: checked,
-    //                 },
-    //             }),
-    //         })
-    //             .then((resp) => resp.json())
-    //             .then((data) => {
-    //                 setUserData(data);
-    //                 setChecked(data.data.attributes.privacy);
-    //             });
-    //     }
-    // }, [checked]);
-
-    // useEffect(() => {
-    //     updateInfo();
-    // }, []);
 
     const updateInfo = () => {
         fetch(`http://localhost:3000/users`, {
@@ -248,11 +288,19 @@ export default function SearchPage(props) {
     };
 
     const getSearch = () => {
+        setSaveChecked(checked);
+        setSaveSearch(searchText);
+        setPage(0);
+    };
+
+    useEffect(() => {
         fetch(`http://localhost:3000/search`, {
             headers: {
                 "Content-Type": "application/json",
-                "search": searchText,
-                "options": JSON.stringify(checked),
+                "search": saveSearch,
+                "options": JSON.stringify(saveChecked),
+                "page": page + 1,
+                "rowsPerPage": rowsPerPage,
             },
             method: "GET",
         })
@@ -260,9 +308,18 @@ export default function SearchPage(props) {
             .then((data) => {
                 setResults(data);
             });
+    }, [saveSearch, page, rowsPerPage, saveChecked]);
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
     };
 
-    console.log(userWatch);
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    // console.log(results);
 
     return (
         <div className={classes.root}>
@@ -400,14 +457,142 @@ export default function SearchPage(props) {
                                             )}
                                         </TableRow>
                                     );
+                                } else if (row.type === "County") {
+                                    return (
+                                        <TableRow
+                                            onClick={() => history.push(`/county/${row.object.fids}`)}
+                                            key={row.id}
+                                            hover
+                                            tabIndex={-1}
+                                        >
+                                            <TableCell component="th" scope="row" paddingRight="10px">
+                                                {row.type}
+                                            </TableCell>
+                                            <TableCell align="right">{row.object.name}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                row.object.total_donated
+                                            )}`}</TableCell>
+
+                                            {/* <TableCell align="right">{committee.attributes.comm_party}</TableCell>
+                                            <TableCell align="right">{committee.attributes.comm_name}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.city}, ${row.attributes.state},  ${row.attributes.zip}`}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.employ}, ${row.attributes.occu}`}</TableCell> */}
+                                            {/* <TableCell align="right">
+                                                {`${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 8,
+                                                        row.attributes.date.toString().length - 6
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 6,
+                                                        row.attributes.date.toString().length - 4
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(row.attributes.date.toString().length - 4)}`}
+                                            </TableCell> */}
+
+                                            {jwt === "" ? null : (
+                                                <TableCell align="right">
+                                                    {userWatch.find(
+                                                        (o) => o.type === "county" && o.id === row.object.fids
+                                                    ) === undefined ? (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                addWatchlistItem(row.type, row.object.fids);
+                                                            }}
+                                                        >
+                                                            Select
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(row.type, row.object.fids);
+                                                            }}
+                                                            variant="contained"
+                                                            color="secondary"
+                                                        >
+                                                            Deselect
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    );
                                 } else {
-                                    return null;
+                                    return (
+                                        <TableRow
+                                            onClick={() => history.push(`/zip/${row.object.zip}`)}
+                                            key={row.id}
+                                            hover
+                                            tabIndex={-1}
+                                        >
+                                            <TableCell component="th" scope="row" paddingRight="10px">
+                                                {row.type}
+                                            </TableCell>
+                                            <TableCell align="right">{row.object.zip}</TableCell>
+                                            <TableCell align="right">{`$${numberWithCommas(
+                                                row.object.total_donated
+                                            )}`}</TableCell>
+
+                                            {/* <TableCell align="right">{committee.attributes.comm_party}</TableCell>
+                                            <TableCell align="right">{committee.attributes.comm_name}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.city}, ${row.attributes.state},  ${row.attributes.zip}`}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.employ}, ${row.attributes.occu}`}</TableCell> */}
+                                            {/* <TableCell align="right">
+                                                {`${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 8,
+                                                        row.attributes.date.toString().length - 6
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 6,
+                                                        row.attributes.date.toString().length - 4
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(row.attributes.date.toString().length - 4)}`}
+                                            </TableCell> */}
+
+                                            {jwt === "" ? null : (
+                                                <TableCell align="right">
+                                                    {userWatch.find(
+                                                        (o) => o.type === "zip_code" && o.id === row.object.zip
+                                                    ) === undefined ? (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                addWatchlistItem(row.type, row.object.zip);
+                                                            }}
+                                                        >
+                                                            Select
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(row.type, row.object.zip);
+                                                            }}
+                                                            variant="contained"
+                                                            color="secondary"
+                                                        >
+                                                            Deselect
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    );
                                 }
                             })}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                {/* <TablePagination
+                <TablePagination
                     rowsPerPageOptions={[20, 50, 100]}
                     component="div"
                     count={-1}
@@ -415,7 +600,7 @@ export default function SearchPage(props) {
                     page={page}
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
-                /> */}
+                />
             </Paper>
         </div>
     );
