@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         height: "100%",
         width: "40%",
         display: "inline-block",
-        backgroundColor: "#e9c46a",
+        backgroundColor: "#F7EACA",
     },
     innerDiv: {
         display: "flex",

@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "15%",
         marginTop: "1.5%",
         textAlign: "left",
-        backgroundColor: "#e9c46a",
+        backgroundColor: "#F7EACA",
     },
     watchlist: {
         width: "70%",
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "2%",
         width: "96%",
         // height: "80px",
-        backgroundColor: "#ffe8d6",
+        backgroundColor: "#FCF8ED",
     },
     bioLabel: {
         marginLeft: "2%",
