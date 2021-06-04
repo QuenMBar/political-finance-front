@@ -307,10 +307,10 @@ export default function SearchPage(props) {
                             control={<Checkbox size="small" checked={checked.cou} onChange={handleChange} name="cou" />}
                             label="County"
                         />
-                        {/* <FormControlLabel
-                            control={<Checkbox size="small" checked={checked.usr} onChange={handleChange} name="com" />}
-                            label="Committee Donations"
-                        /> */}
+                        <FormControlLabel
+                            control={<Checkbox size="small" checked={checked.usr} onChange={handleChange} name="usr" />}
+                            label="User"
+                        />
                     </FormGroup>
                 </div>
             </Paper>
@@ -472,6 +472,70 @@ export default function SearchPage(props) {
                                                     )}
                                                 </TableCell>
                                             )}
+                                        </TableRow>
+                                    );
+                                } else if (row.type === "User") {
+                                    return (
+                                        <TableRow
+                                            // onClick={() => history.push(`/county/${row.object.fids}`)}
+                                            key={row.object.fids}
+                                            hover
+                                            tabIndex={-1}
+                                        >
+                                            <TableCell component="th" scope="row" paddingRight="10px">
+                                                {row.type}
+                                            </TableCell>
+                                            <TableCell align="right">{row.object.username}</TableCell>
+                                            <TableCell align="right">{row.object.bio}</TableCell>
+                                            <TableCell align="right"> </TableCell>
+
+                                            {/* <TableCell align="right">{committee.attributes.comm_party}</TableCell>
+                                            <TableCell align="right">{committee.attributes.comm_name}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.city}, ${row.attributes.state},  ${row.attributes.zip}`}</TableCell>
+                                            <TableCell align="right">{`${row.attributes.employ}, ${row.attributes.occu}`}</TableCell> */}
+                                            {/* <TableCell align="right">
+                                                {`${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 8,
+                                                        row.attributes.date.toString().length - 6
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(
+                                                        row.attributes.date.toString().length - 6,
+                                                        row.attributes.date.toString().length - 4
+                                                    )}-${row.attributes.date
+                                                    .toString()
+                                                    .substring(row.attributes.date.toString().length - 4)}`}
+                                            </TableCell> */}
+
+                                            {/* {jwt === "" ? null : (
+                                                <TableCell align="right">
+                                                    {userWatch.find(
+                                                        (o) => o.type === "county" && o.id === row.object.fids
+                                                    ) === undefined ? (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                addWatchlistItem(row.type, row.object.fids);
+                                                            }}
+                                                        >
+                                                            Select
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeWatchlistItem(row.type, row.object.fids);
+                                                            }}
+                                                            variant="contained"
+                                                            color="secondary"
+                                                        >
+                                                            Deselect
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            )} */}
                                         </TableRow>
                                     );
                                 } else {
