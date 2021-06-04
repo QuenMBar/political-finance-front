@@ -246,9 +246,9 @@ export default function ConToZipPage() {
                     <Typography>
                         Rep Amount: ${numberWithCommas(donationData.zip.data.attributes.rep_donation)}
                     </Typography>
-                    {userWatch.find(
-                        (o) => o.type === donationData.zip.data.type && o.id === donationData.zip.data.id
-                    ) === undefined ? (
+                    {jwt === "" ? null : userWatch.find(
+                          (o) => o.type === donationData.zip.data.type && o.id === donationData.zip.data.id
+                      ) === undefined ? (
                         <Fragment>
                             <Typography className={classes.countyLabel}>Watchlist:</Typography>
                             <Button

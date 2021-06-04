@@ -251,8 +251,9 @@ export default function ZipCodePage() {
                     <Typography>Total Amount: ${numberWithCommas(totalAmout)}</Typography>
                     <Typography>Dem Amount: ${numberWithCommas(demAmout)}</Typography>
                     <Typography>Rep Amount: ${numberWithCommas(repAmout)}</Typography>
-                    {userWatch.find((o) => o.type === countyData.data.type && o.id === countyData.data.id) ===
-                    undefined ? (
+                    {jwt === "" ? null : userWatch.find(
+                          (o) => o.type === countyData.data.type && o.id === countyData.data.id
+                      ) === undefined ? (
                         <Fragment>
                             <Typography className={classes.countyLabel}>Watchlist:</Typography>
                             <Button
