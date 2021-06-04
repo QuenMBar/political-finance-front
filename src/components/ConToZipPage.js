@@ -294,7 +294,7 @@ export default function ConToZipPage() {
                     >
                         <TableHead>
                             <TableRow>
-                                <TableCell className={classes.headers}>Name</TableCell>
+                                <TableCell className={classes.headers}>Donor Name</TableCell>
                                 <TableCell className={classes.headers} align="right">
                                     Total Amount Donated
                                 </TableCell>

@@ -38,15 +38,40 @@ The backend is alot more complicated.  It is a rails api that uses the bulk down
 - Next, install or start [PostgreSQL](https://www.postgresql.org/download/)
 - Next, just cloning down the repo.  This app was built on ruby 3.0.1 and may not work on other versions
 - Then run bundle install
-- TODO: Download snapshot
-- Now run the following commands
+- Next you will need to download the zip file found [here](https://f000.backblazeb2.com/file/PoliticalFinanceSnapshot/dbdevsnapshot.gz).  This is 5gb so it may take a bit.
+- Now run the following commands in the rails app
 
     ```bash
     rails db:setup
     rails db:migrate
+    ```
+
+    and run this command wherever the file was downloaded to
+
+    ```bash
     gunzip -c dbdevsnapshot.gz | psql PoliticalFinances_development
     ```
 
 - Before we can run our database though, we will need to reindex searchkick by running ```searchkick:reindex:all```.  There are also multithreaded ways to do this since it will take a while, if you're interested please look [here](https://github.com/ankane/searchkick#performance)
 - Also set your .env the same way as above.  The value can be any string without spaces.
 - The final step is just to run ```rails s```.  Do this before npm start.
+
+### Api Calls
+
+| REST Action | URL              | Body Params                                | Header Params                                                                                 | Description                                                                                                                                    | Response                                                     |
+| ----------- | ---------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| POST        | /signup          | username, password                         | None                                                                                          | If the username is unique, then it creates a user with the password encrypted                                                                  | An object with a property `msg` as the status                |
+| POST        | /login           | username, password                         | None                                                                                          | If the username password combo matches a User, then it returns a JWT to be used for authentication purposes                                    | JWT Token                                                    |
+| GET         | /user            | None                                       | JWT token                                                                                     | If the JWT is valid, it returns the data for the current user.  This includes the counties, zip codes, and individual donations for that user. | Object of user data                                          |
+| PUT         | /users/bio       | New bio text                               | JWT token                                                                                     | If the JWT is valid, it updates the users bio and returns the data for the current user after.                                                 | Object of user data                                          |
+| PUT         | /users/priv      | Is Private Boolean                         | JWT token                                                                                     | If the JWT is valid, it updates the users privacy status and returns the data for the current user after.                                      | Object of user data                                          |
+| GET         | /counties        | None                                       | None                                                                                          | Shows the barebones data for all the counties                                                                                                  | Object of county data                                        |
+| GET         | /counties/:id    | None                                       | None                                                                                          | Shows the in detail data for a county along with all the zip codes in that county                                                              | Object of a counties data with zip codes included            |
+| GET         | /zip_codes/:id   | None                                       | An array of the types of donations it should be including. Also the Page, and Amount per Page | Shows the in detail data for a zip code along with a page of the individual donation in the zip                                                | Object of a zip code data with individual donations included |
+| POST        | /link            | The type of relation to link and its id    | JWT token                                                                                     | Creates a link between the user for the JWT Token and the specified object                                                                     | { msg: 'done' }                                              |
+| DELETE      | /link            | The type of relation to unlink and its id  | JWT token                                                                                     | Unlinks the user for the JWT Token and the specified object                                                                                    | { msg: 'done' }                                              |
+| GET         | /geojson         | None                                       | None                                                                                          | Returns the county data in the format of geojson along with headers for the total amount of money spent.                                       | County GeoJson along with multiple headers for total amounts |
+| GET         | /users/relations | None                                       | JWT token                                                                                     | Returns the type and id of all the relationships for the user                                                                                  | Object of all the relationships that the user has            |
+| GET         | /search          | An object of the models to be searching in | None                                                                                          | Returns a page of search results for the given query                                                                                           | Object of search results                                     |
+
+Examples of these calls can be found in the app
